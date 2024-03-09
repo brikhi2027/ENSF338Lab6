@@ -86,7 +86,10 @@ digitsAndOpsOnly = []
 stack = []
 print(expression)
 i = 0
+
+
 while i<len(expression):
+    
     if expression[i].isdigit():
         num = ''
         while i<len(expression) and expression[i].isdigit():
@@ -95,8 +98,9 @@ while i<len(expression):
            
         digitsAndOpsOnly.append(num)
         
-
-
+    # boundary check after possibly incrementing i to the max above
+    if i>= len(expression):
+        break
     
     if expression[i] in operations_list:
         digitsAndOpsOnly.append(expression[i])
