@@ -12,13 +12,18 @@ class Heap:
             self._array.append(self.inputArray[k])
             k += 1
             self._size += 1
+        for x in range(n):
+            min = min([self._array])
+            left_child = (2 * min) + 1
+            right_child = (2 * min) + 2
 
-        for i in range(n):
-            max_indx = n - 1
-            for j in range(n-1, i):
-                if self._array[j] > self._array[max_indx]:
-                    max_indx = j
-                self._array[i], self._array[max_indx] = self._array[max_indx], self._array[i]
+            if (left_child < self._size) and (self._array[left_child] < self._array[min]):
+                min = left_child
+            if (right_child < self._size) and (self._array[right_child] < self._array[min]):
+                min = right_child
+            if(min != n):
+                self._array[min], self._array[n] = self._array[n], self._array[min]
+                self.heapify(self, min)
         return self._array
     
     def enqueue(self, element):
@@ -33,27 +38,46 @@ class Heap:
     def dequeue(self, element):
     # removes an element from the heap (while correctly maintaining the heap's properties)
         temp = element
-        pos = -1
 
+        if self._size == 0:
+            print("Cannot delete from an empty heap.")
+            return
         if self._size == 1:
+            self._size = 0
             self._array = []
             return temp
         
         i = 0
+        pos = -1
         for i in range(0, self._size): # find the position of the element to be removed
             if (self._array[i] == element):
                 pos = i
                 break
         if pos == -1: 
             print("The element you want to remove does not exist.")
+        if i == self._array[self._size - 1]:
+            return temp
+        
         self._array[i], self._array[self._size - 1] = self._array[self._size - 1], self._array[i] # swap the node to be deleted with the last child
         self._array.pop() # delete the last child
         self._size -= 1 
 
-        current_indx = i
-        while(element < self._array[(current_indx - 1) // 2]): # move the element up the tree if its smaller than its parents
-            self._array[current_indx], self._array[(current_indx - 1) // 2] = self._array[(current_indx - 1) // 2], self._array[current_indx]
-            current_indx = current_indx // 2
+        curr_indx = i
+        min_indx = 0
+        while(True):
+            left_child = (2 * curr_indx) + 1
+            right_child = (2 * curr_indx) + 2
+            
+            if (left_child < self._size) and (self._array[left_child] < self._array[min_indx]):
+                min_indx = left_child
+
+            if (right_child < self._size) and (self._array[right_child] < self._array[min_indx]):
+                min_indx = right_child
+            if (min_indx != curr_indx):
+                self._array[curr_indx], self._array[min_indx] = self._array[min_indx], self._array[curr_indx]
+                curr_indx = min_indx
+            else:
+                break
         return temp
 
 
@@ -79,8 +103,8 @@ test1enqueue = test1.enqueue(3)
 print("Expected: [1, 2, 3, 6, 10, 15, 4]")
 print("Output:  ", test1._array,'\n')
 # dequeueing
-test1dequeue = test1.dequeue(4)
-print("Expected: [1, 2, 3, 6, 10, 15]")
+test1dequeue = test1.dequeue(1)
+print("Expected: [2, 4, 3, 6, 10, 15]")
 print("Output:  ", test1._array,'\n')
 
 
