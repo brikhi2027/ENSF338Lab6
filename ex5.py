@@ -21,33 +21,25 @@ class Node:
 class ListPriorityQueue:
     def __init__(self):
         self._head = None
+        self._before = None
+        self._after = None
 
     def enqueue(self, value):
-        if self._head == None: # if inserting to empty list
-            self._head = Node(value, None)
-            return
+        new_node = Node(value, None)
+        if (self._head is None) or (value <= self._head.getData()) :
+            new_node.setNext(self._head)
+            self._head = new_node
         else:
-            new_node = Node(value, None)
-            current = self._head
+            self._before = self._head
+            self._after = self._head.getNext()
+            while (self._after is not None) and (value > self._after.getData()):
+                self._before = self._after
+                self._after = self._after.getNext()
 
-            if (current == self._head) and (current.getData() > value):
-                    new_node.setNext(self._head)
-                    self._head = new_node
-                    return
+            new_node.setNext(self._before.getNext())
+            self._before.setNext(new_node)
 
-            while(current.getNext() != None):
-                next_node = current.getNext()
-                next_value = next_node.getData()
-                if (next_value > value):
-                    new_node.setNext(current.getNext())
-                    current.setNext(new_node)
-                else:
-                    current.setNext(current.getNext)
-
-            if (current.getNext() == None) and (current.getData() < value):
-                current.setNext(new_node)
-        return
-
+            
     def dequeue(self):
         if self._head == None:
             print("Queue is empty" )
@@ -62,7 +54,7 @@ class ListPriorityQueue:
             delete = None
             return temp
         
-    def print(self):
+    def print(self): # used for testing
         current = self._head
         while current is not None:
             print(current.toString())
@@ -126,38 +118,6 @@ class HeapPriorityQueue:
         return temp
     
 
-
-
-
-test2 = HeapPriorityQueue()
-
-test2.enqueue(10)
-test2.enqueue(7)
-test2.enqueue(11)
-test2.enqueue(4)
-test2.enqueue(3)
-print(test2._array)
-test2.dequeue()
-print(test2._array)
-test2.dequeue()
-print(test2._array)
-
-test1 = ListPriorityQueue()
-
-test1.enqueue(10)
-print(test1.print())
-test1.enqueue(7)
-print(test1.print())
-test1.enqueue(11)
-print(test1.print())
-test1.enqueue(4)
-print(test1.print())
-test1.enqueue(3)
-print(test1.print())
-test1.dequeue()
-print(test1.print())
-test1.dequeue()
-print(test2.print())
 # 3. Measure execution time of both implementations [0.4 pts]
 # 1. Generate a random list of 1000 tasks, where a task is enqueue of a random integer with
 # probability 0.7, and dequeue with probability 0.3
@@ -227,3 +187,9 @@ print("Avg linked list implemenation time: ", avg_list_times)
 
 # 4. Discuss the results: which implementation is faster? Why do you think is that? [0.2 pts]
 
+# The array implementation is about 10 times faster than the linked list implementation. This is most
+# likely because linked list insertion is O(n) while heap insertion is O(logn). Linked lists must traverse 
+# through all its elements until it reaches the desired place to insert. This incurs a worst case cost of O(n).
+# In the array implementation, however, an insertion is only O(logn) in the worst case, because at worst, 
+# the new element will have to swap with its parent logn times. Additionally, to access
+# an element, an array can use indexing while a linked list has to traverse through its values.
