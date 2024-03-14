@@ -8,12 +8,18 @@ class Heap:
     def heapify(self):
     # receives as input an array of integers, stores into the internal array, and turn it into a heap
         n = len(self.inputArray)
+        
         for k in range(n):
             self._array.append(self.inputArray[k])
-            k += 1
             self._size += 1
-        for x in range(n):
-            min = min([self._array])
+
+        min_i = 0
+        for j in range(n):
+            if self._array[j] < self._array[min_i]:
+                min_i = j
+
+        for x in range(self._size//2, 0, -1):
+            min = min_i
             left_child = (2 * min) + 1
             right_child = (2 * min) + 2
 
@@ -21,8 +27,8 @@ class Heap:
                 min = left_child
             if (right_child < self._size) and (self._array[right_child] < self._array[min]):
                 min = right_child
-            if(min != n):
-                self._array[min], self._array[n] = self._array[n], self._array[min]
+            if(min != min_i):
+                self._array[min], self._array[n] = self._array[x], self._array[min]
                 self.heapify(self, min)
         return self._array
     
